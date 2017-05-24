@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>
+	CRUD opreations
+</title>
+<style type="text/css">
+   button{
+   background-color: #239487;
+   }
+
+   h1 {
+   font-family: "Trebuchet MS", "Lucida Grande", Tahoma, sans-serif;
+   }
+  
+   body {
+   font-family: Georgia, Cambria, "Times New Roman", serif;
+   }
+
+   form {
+   color: #ed8030;
+   margin: 1em;
+   background-color: #EEEEEE;
+   padding: 1em;
+   border: solid 1pt #999999;
+   }
+   
+   p {
+     color: #154028;
+   margin: 1em;
+   background-color: #FFFFFF;
+   padding: 1em;
+   }
+   tr,th,td,table {
+     border:solid 0.5pt #999999;
+   }
+   lable {
+
+   padding: 1.2em;
+   }
+
+  </style>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<p align="center"> Profile description Below </p>
+<ul class="profiles">
+	<% for(var i=0;i<profiles.length; i++) {%>
+	<li class ="profiles">
+		<lable>ID : <%=profiles[i]._id %></lable>
+		<lable>NAME : <%=profiles[i].name %></lable>
+		<lable>EMAIL : <%=profiles[i].email %></lable>
+		<lable>AGE : <%=profiles[i].age %></lable>
+		<lable>GENDER : <%=profiles[i].gender %></lable>
+		<lable>IMAGE : <img src="<%=profiles[i].img %>" width ='70' height ='70'</lable>
+	<li>
+	<% } %>
+</ul>
+<div class="update">
+<form action="/profiles" method="POST" >
+		Name:<input id="pname" type="text" name="name" placeholder="Pls input username" ><br>
+		Email:<input id="pemail" type="text" name="email" placeholder="Pls input email" ><br>
+		Age:<input id="page" type="text" name="age" placeholder="Pls input age" ><br>
+		Gender:<input id="pgender" type="text" name="gender" placeholder="Pls input gender"><br>
+		Image:<input id="pimage" type="file" name="img" placeholder="Pls input Image"><br>
+		<button id="postbutton" type="submit" value="submit" >Submit</button>
+</form> 
+</div>
+<form>
+  <h1>Update Users Profiles</h1>
+    Name:<input id="upname" type="text" placeholder="Pls input username" name="name"><br>
+    Age:<input id="upage" type="text" placeholder="Pls input age" name="age"><br>
+    Email:<input id="upemail" type="text" placeholder="Pls input email" name="email"><br>
+    Gender:<input id="upgender" type="text" placeholder="Pls input gender" name="gender"><br>
+    Image:<input id="upimage" type="file" name="img"><br>
+	<button id="myuserupdate"> Update Profile </button>
+</form>
+
+<div>
+	<input id="delete" type="text" name="name" placeholder="Please enter the name"> 
+	<button id="DelButton">Delete User Profile</button>
+</div>
+
+<script>
+// update function
+
+var updateAct = document.getElementById('myuserupdate')
+
+updateAct.addEventListener('click', function() {
+
+
+var updatename= document.getElementById("upname").value;
+var updateemail= document.getElementById("upemail").value;
+var updateage= document.getElementById("upage").value;
+var updategender= document.getElementById("upgender").value;
+var updateimg= document.getElementById("upimage").value;
+
+ fetch("/profiles", {
+		method: 'put',
+		type:'UPDATE',
+		headers:{"Content-Type": "application/json"},
+		body: JSON.stringify({
+			"name": updatename,
+			"email": updateemail,
+			"age": updateage,
+			"gender": updategender,
+			"img": updateimg
+		})
+	})
+	.then(function(response){alert("response status: " + response.status)})
+	.catch(function(error) {
+		alert("An error occured in put method:" + error.message);
+	})
+})
+
+var del = document.getElementById('DelButton');
+del.addEventListener('click', function(){
+
+	var delprofile = document.getElementById("delete").value;
+
+	fetch("/profiles", {
+		method: "delete",
+		headers:{"Content-Type": "application/json"},
+		body: JSON.stringify({"name": delprofile})
+	})
+	.then(function(response){alert("response's status: "+response.status)})
+      .catch(function (error) {
+        alert('An error occured(delete): '+error.message);
+      })
+})
+	var createimage;
+	var postimage = document.getElementById('pimage');
+	postimage.addEventListener('change', function(){
+
+		var read = new FileReader();
+		read.readAsDataURL(this.files[0]);
+		read.onload= function(e){
+			createimage = e.target.result;
+		};
+	})
+
+	var upimg
+	var upImage = document.getElementById('upimage');
+	upImage.addEventListener('change', function(){
+		var read = new FileReader();
+		read.readAsDataURL(this.files[0]);
+		read.onload = function(e){
+			upimg = e.target.result;
+		}
+
+	})
+</script>
+</body>
+</html>
